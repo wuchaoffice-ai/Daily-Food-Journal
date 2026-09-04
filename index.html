@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f8f3">
+  <title>每日食记</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <style>.photo-preview{width:100%;max-height:190px;object-fit:cover;border-radius:14px;margin-top:12px;border:1px solid #dce6dc}.photo-help{font-size:13px;color:#718076;line-height:1.5;margin:8px 0}</style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow" id="todayLabel"></p>
+        <h1>每日食记</h1>
+      </div>
+      <button class="icon-button" id="profileButton" aria-label="编辑个人资料">⌁</button>
+    </header>
+
+    <section class="hero card">
+      <div class="ring" id="calorieRing"><span id="calorieValue">0</span><small>剩余 kcal</small></div>
+      <div class="hero-copy">
+        <p class="muted">今日已记录</p>
+        <strong><span id="eatenValue">0</span> <small>kcal</small></strong>
+        <p class="target-line">目标 <span id="targetValue">2000</span> kcal</p>
+      </div>
+    </section>
+
+    <section class="macro-row" aria-label="营养素进度">
+      <div class="macro card"><span>蛋白质</span><strong id="proteinValue">0g</strong></div>
+      <div class="macro card"><span>碳水</span><strong id="carbValue">0g</strong></div>
+      <div class="macro card"><span>脂肪</span><strong id="fatValue">0g</strong></div>
+    </section>
+
+    <section class="section-head">
+      <h2>今天吃了什么</h2>
+      <button class="text-button" id="addFoodButton">＋ 添加</button>
+    </section>
+    <section id="foodList" class="food-list"></section>
+    <div id="emptyState" class="empty card">
+      <span>🥣</span>
+      <p>还没有记录。先从第一餐开始吧。</p>
+    </div>
+
+    <section class="section-head"><h2>今日运动</h2><button class="text-button" id="addExerciseButton">＋ 添加</button></section>
+    <section class="exercise-total card">今日预计消耗 <strong id="exerciseCalories">0</strong> kcal</section>
+    <section id="exerciseList" class="food-list"></section>
+    <div id="exerciseEmpty" class="empty card"><span>🏃</span><p>还没有运动记录。</p></div>
+    <section class="section-head"><h2>收藏餐厅</h2><button class="text-button" id="manageRestaurants">管理</button></section>
+
+    <section class="section-head advice-head"><h2>今日建议</h2></section>
+    <section class="advice card" id="advice"></section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="主导航">
+    <button class="nav-current"><span>◉</span>今日</button>
+    <button id="historyButton"><span>◷</span>记录</button>
+    <button id="infoButton"><span>ⓘ</span>参考</button>
+    <button id="profileNavButton"><span>♡</span>我的</button>
+  </nav>
+
+  <dialog id="foodDialog">
+    <form method="dialog" id="foodForm">
+      <div class="modal-head"><h2>添加餐食</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div>
+      <label>餐食名称<input required id="foodName" placeholder="例如：鸡胸肉沙拉" autocomplete="off"></label>
+      <div class="form-grid">
+        <label>类别<select id="mealType"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option><option>零食</option></select></label>
+        <label>热量（kcal）<input required id="foodCalories" type="number" min="0" placeholder="350"></label>
+        <label>蛋白质（g）<input id="foodProtein" type="number" min="0" value="0"></label>
+        <label>碳水（g）<input id="foodCarbs" type="number" min="0" value="0"></label>
+        <label>脂肪（g）<input id="foodFat" type="number" min="0" value="0"></label>
+      </div>
+      <label>中餐家常菜快捷选择<select id="dishPreset"><option value="">自行填写</option><option data-cal="410" data-p="28" data-c="38" data-f="16">宫保鸡丁（1 份）</option><option data-cal="360" data-p="26" data-c="42" data-f="10">番茄炒蛋配饭（1 份）</option><option data-cal="390" data-p="30" data-c="45" data-f="9">清蒸鱼配饭和青菜（1 份）</option><option data-cal="460" data-p="24" data-c="58" data-f="15">牛肉西兰花炒饭（1 份）</option><option data-cal="330" data-p="18" data-c="43" data-f="9">麻婆豆腐配半碗饭（1 份）</option><option data-cal="320" data-p="22" data-c="38" data-f="8">鸡丝汤面（1 碗）</option><option data-cal="280" data-p="17" data-c="35" data-f="7">虾仁蔬菜炒饭（小份）</option></select></label>
+      <label>收藏餐厅菜单<select id="restaurantPreset"><option value="">选择已收藏的菜品</option></select></label>
+      <label>零食名称（可选）<input id="snackSearch" placeholder="例如：Oreo、薯片、巧克力"></label>
+      <div class="form-grid"><label>食用量（g）<input id="snackGrams" type="number" min="1" value="100"></label><label><span>&nbsp;</span><button type="button" class="secondary search-snack" id="searchSnack">免费查询零食</button></label></div>
+      <label hidden>餐食照片（已停用）<input id="foodPhoto" type="file" accept="image/*" capture="environment"></label>
+      <img id="photoPreview" class="photo-preview" hidden alt="餐食照片预览">
+      <button hidden type="button" class="secondary analyze-button" id="analyzePhoto" disabled>AI 识别照片</button>
+      <p class="photo-help" id="photoHelp">照片仅保存在手机；热量可手动填写或使用上方快捷菜品与零食查询。</p>
+      <button class="primary" value="default" id="saveFood">保存餐食</button>
+    </form>
+  </dialog>
+
+  <dialog id="profileDialog">
+    <form method="dialog" id="profileForm">
+      <div class="modal-head"><h2>我的基本信息</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div>
+      <p class="modal-note">用于估算每日热量目标；你也可以直接设定目标。</p>
+      <label>使用者<select id="userPicker"></select></label>
+      <label>名称<input id="userName" maxlength="12" placeholder="例如：小李"></label>
+      <div class="form-grid">
+        <label>性别<select id="gender"><option value="female">女</option><option value="male">男</option></select></label>
+        <label>年龄<input id="age" type="number" min="14" max="100" value="30"></label>
+        <label>身高（cm）<input id="height" type="number" min="100" max="230" step="0.1" value="165"></label>
+        <label>体重（kg）<input id="weight" type="number" min="30" max="300" step="0.1" value="60"></label>
+        <label>活动量<select id="activity"><option value="1.2">久坐</option><option value="1.375">轻度活动</option><option value="1.55">中度活动</option><option value="1.725">高活动量</option></select></label>
+        <label>目标<select id="goal"><option value="-400">减脂</option><option value="0">维持</option><option value="250">增肌</option></select></label>
+      </div>
+      <label>每日热量目标（kcal）<input id="calorieTarget" type="number" min="1000" max="6000" value="2000"></label>
+      <div class="modal-actions"><button type="button" class="secondary" id="calculateTarget">自动计算</button><button class="primary" value="default" id="saveProfile">保存</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="historyDialog">
+    <form method="dialog">
+      <div class="modal-head"><h2>近 90 天记录</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div>
+      <section id="historyList" class="history-list"></section>
+    </form>
+  </dialog>
+  <dialog id="weightDialog">
+    <form method="dialog" id="weightForm">
+      <div class="modal-head"><h2>记录今日体重</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div>
+      <p class="modal-note">每天记录一次，更容易看到长期趋势。</p>
+      <label>体重（kg）<input required id="dailyWeight" type="number" min="30" max="300" step="0.1" inputmode="decimal"></label>
+      <button class="primary" value="default">保存今日体重</button>
+    </form>
+  </dialog>
+  <dialog id="exerciseDialog">
+    <form method="dialog" id="exerciseForm">
+      <div class="modal-head"><h2>添加运动</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div>
+      <label>运动类型<select id="exerciseType"><option value="walk" data-met="3.5">走路</option><option value="run" data-met="8.3">跑步／慢跑</option><option value="cycle" data-met="7">骑车</option><option value="swim" data-met="6">游泳</option><option value="yoga" data-met="3">瑜伽／普拉提</option><option value="hiit" data-met="8">HIIT 有氧</option><option value="strength" data-met="3.5">力量训练</option><option value="weights" data-met="5">高强度重量训练</option><option value="custom" data-met="4">自定义运动</option></select></label>
+      <label>具体动作／备注<input id="exerciseName" placeholder="例如：深蹲、哑铃卧推、海边散步"></label>
+      <label>力量训练部位<select id="strengthPart"><option value="">非力量训练／不填写</option><option>肩背</option><option>臀腿</option><option>核心</option><option>肩</option><option>背</option><option>腿</option><option>胸</option><option>手臂</option></select></label>
+      <div class="form-grid"><label>时长（分钟，力量训练可不填）<input id="exerciseMinutes" type="number" min="1" placeholder="30"></label><label>步数（走路可填）<input id="exerciseSteps" type="number" min="0" placeholder="6000"></label><label>组数（力量训练可填）<input id="exerciseSets" type="number" min="0" placeholder="3"></label><label>每组次数（可填）<input id="exerciseReps" type="number" min="0" placeholder="12"></label><label>重量（kg）<input id="exerciseWeight" type="number" min="0" step="0.5" placeholder="20"></label></div>
+      <p class="photo-help">消耗热量依体重、强度和实际心率而不同，此处为估算。</p>
+      <button class="primary" value="default">保存运动</button>
+    </form>
+  </dialog>
+  <dialog id="restaurantDialog"><form method="dialog"><div class="modal-head"><h2>收藏餐厅菜单</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div><label>餐厅名称<input id="restaurantName" placeholder="例如：某某川菜"></label><div class="form-grid"><label>菜品名称<input id="restaurantDishName" placeholder="例如：水煮鱼"></label><label>热量（kcal）<input id="restaurantDishCalories" type="number" min="0" placeholder="650"></label><label>蛋白质（g）<input id="restaurantDishProtein" type="number" min="0" value="0"></label><label>碳水（g）<input id="restaurantDishCarbs" type="number" min="0" value="0"></label><label>脂肪（g）<input id="restaurantDishFat" type="number" min="0" value="0"></label></div><button type="button" class="primary" id="saveRestaurantDish">加入收藏菜单</button><section id="restaurantList" class="history-list"></section></form></dialog>
+  <dialog id="infoDialog"><form method="dialog"><div class="modal-head"><h2>营养参考</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div><input id="infoSearch" placeholder="搜索：鸡胸肉、火锅、奶茶…"><p class="photo-help">基础食材为每 100g 可食部分；餐食注明每 100g 或一份。实际烹调和配方会不同。</p><section id="infoList" class="history-list"></section></form></dialog>
+  <script src="app.js"></script>
+</body>
+</html>

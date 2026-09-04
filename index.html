@@ -70,7 +70,8 @@
         <label>热量（kcal）<input required id="foodCalories" type="number" min="0" placeholder="350"></label>
         <label>蛋白质（g）<input id="foodProtein" type="number" min="0" value="0"></label>
         <label>碳水（g）<input id="foodCarbs" type="number" min="0" value="0"></label>
-        <label>脂肪（g）<input id="foodFat" type="number" min="0" value="0"></label>
+        <label>脂肪（g）<input id="foodFat" type="number" min="0" step="0.01" value="0"></label>
+        <label>钠（mg，选填）<input id="foodSodium" type="number" min="0" step="0.01" value="0" placeholder="例如：320"></label>
       </div>
       <label>中餐家常菜快捷选择<select id="dishPreset"><option value="">自行填写</option><option data-cal="410" data-p="28" data-c="38" data-f="16">宫保鸡丁（1 份）</option><option data-cal="360" data-p="26" data-c="42" data-f="10">番茄炒蛋配饭（1 份）</option><option data-cal="390" data-p="30" data-c="45" data-f="9">清蒸鱼配饭和青菜（1 份）</option><option data-cal="460" data-p="24" data-c="58" data-f="15">牛肉西兰花炒饭（1 份）</option><option data-cal="330" data-p="18" data-c="43" data-f="9">麻婆豆腐配半碗饭（1 份）</option><option data-cal="320" data-p="22" data-c="38" data-f="8">鸡丝汤面（1 碗）</option><option data-cal="280" data-p="17" data-c="35" data-f="7">虾仁蔬菜炒饭（小份）</option></select></label>
       <label>收藏餐厅菜单<select id="restaurantPreset"><option value="">选择已收藏的菜品</option></select></label>
@@ -130,7 +131,7 @@
     </form>
   </dialog>
   <dialog id="restaurantDialog"><form method="dialog"><div class="modal-head"><h2>收藏餐厅菜单</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div><label>餐厅名称<input id="restaurantName" placeholder="例如：某某川菜"></label><div class="form-grid"><label>菜品名称<input id="restaurantDishName" placeholder="例如：水煮鱼"></label><label>热量（kcal）<input id="restaurantDishCalories" type="number" min="0" placeholder="650"></label><label>蛋白质（g）<input id="restaurantDishProtein" type="number" min="0" value="0"></label><label>碳水（g）<input id="restaurantDishCarbs" type="number" min="0" value="0"></label><label>脂肪（g）<input id="restaurantDishFat" type="number" min="0" value="0"></label></div><button type="button" class="primary" id="saveRestaurantDish">加入收藏菜单</button><section id="restaurantList" class="history-list"></section></form></dialog>
-  <dialog id="infoDialog"><form method="dialog"><div class="modal-head"><h2>营养参考</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div><input id="infoSearch" placeholder="搜索：鸡胸肉、火锅、奶茶…"><p class="photo-help">基础食材为每 100g 可食部分；餐食注明每 100g 或一份。实际烹调和配方会不同。</p><section id="infoList" class="history-list"></section></form></dialog>
+  <dialog id="infoDialog"><form method="dialog"><div class="modal-head"><h2>营养参考</h2><button type="button" onclick="this.closest('dialog').close()" class="close">×</button></div><input id="infoSearch" placeholder="搜索：鸡胸肉、火锅、奶茶…"><p class="photo-help">基础食材为每 100g 可食部分；餐食注明每 100g 或一份。下方女性参考适用于一般健康、19–50 岁、非孕哺成人；孕期、疾病、用药或特殊训练请咨询医生／注册营养师。</p><section id="infoList" class="history-list"></section></form></dialog>
   <script src="app.js"></script>
 </body>
 </html>
